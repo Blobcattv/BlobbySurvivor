@@ -8,14 +8,16 @@ class Scene extends Phaser.Scene {
 
         // load player
         this.load.spritesheet("player", "assets/Sprout Lands/Characters/Basic Charakter Spritesheet.png",{
-            frameWidth: 33,
-            frameHeight: 33
+            frameWidth: 17,
+            frameHeight: 18,
+            margin: 15
         });
 
         // load enemy
-        this.load.spritesheet("enemy", "assets/Sprout Lands/Characters/Basic Charakter Spritesheet.png",{
-            frameWidth: 33,
-            frameHeight: 33
+        this.load.spritesheet("enemy", "assets/Sprout Lands/Characters/Basic Enemy Spritesheet.png",{
+            frameWidth: 17,
+            frameHeight: 18,
+            margin: 15
         });
     }
 
@@ -29,21 +31,21 @@ class Scene extends Phaser.Scene {
         this.player = this.physics.add.sprite(config.width / 2, config.height / 2, "player");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.player.setCollideWorldBounds(true);
+        this.player.isInvulnerable = false;
 
         // add "enemy"
         this.enemies = this.physics.add.sprite(config.width, config.height, "enemy");
 
-        
         // health bar
         this.healthBar = this.makeBar(0,0,0xe7153c);
         this.healtbarValue = 100;
         this.setValue(this.healthBar, this.healtbarValue);
         
         // add physics to player and enemy
-        this.physics.add.collider(this.player, this.enemies, (player) => this.hurtPlayer(player, this.healthBar), null, this);
+        this.physics.add.overlap(this.player, this.enemies, (player) => this.hurtPlayer(player, this.healthBar), null, this);
         
         // create container for player and healthbar
-        // const container = this.add.container(config.width / 2, config.height / 2, [ this.healthBar, this.player ]);
+        this.add.container(200,200 [ this.healthBar, this.player ]);
         
         // camera logic to follow player
         this.cameras.main.setBounds(0, 0, 600 * 2, 500 * 2);
@@ -54,24 +56,29 @@ class Scene extends Phaser.Scene {
     update(){
         this.movePlayerManager();
         this.enemyFollows();
+        
+        const touching = !this.player.body.touching.none;
+        console.log({touching});
+        
+        if (!touching) {
+            this.player.isInvulnerable = false;
+            this.player.clearTint();
+        } else {
+            // schaden pro sekunde
+        }
     }
 
     hurtPlayer(player, bar) {
+        console.log(player.isInvulnerable);
+        if(player.isInvulnerable) return;
+
+        player.isInvulnerable = true;
+
         this.healtbarValue += 15;
         const damage = 15;
         bar.scaleX = (bar.scaleX - damage) /100;
-        // player.this.setTintFill(0xffffff);
-
-        // if (this.isTinted) {
-        //     this.clearTint();
-        // } else {
-        //     this.setTintFill(0xffffff);
-        // }
+        player.setTintFill(0xfff345f);
     }
-
-    // takeDamage(player) {
-
-    // }
 
     makeBar(x,y,color) {
         const bar = this.add.graphics();
@@ -107,6 +114,6 @@ class Scene extends Phaser.Scene {
     }
 
     enemyFollows () {
-        this.physics.moveToObject(this.enemies, this.player, 100);
+        this.physics.moveToObject(this.enemies, this.player, 50);
     }
 }
