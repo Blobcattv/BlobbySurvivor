@@ -19,6 +19,12 @@ class Scene extends Phaser.Scene {
             frameHeight: 18,
             margin: 15
         });
+
+        // add spell
+        this.load.spritesheet("beam", "assets/spritesheets/beam.png",{
+            frameWidth: 16,
+            frameHeight: 16
+        });
     }
 
     create(){
@@ -32,6 +38,9 @@ class Scene extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.player.setCollideWorldBounds(true);
         this.player.isInvulnerable = false;
+        
+        // add items
+        this.powerUp = new Powerup(this);
 
         // add "enemy"
         this.enemies = this.physics.add.sprite(config.width, config.height, "enemy");
@@ -42,43 +51,76 @@ class Scene extends Phaser.Scene {
         this.setValue(this.healthBar, this.healtbarValue);
         
         // add physics to player and enemy
-        this.physics.add.overlap(this.player, this.enemies, (player) => this.hurtPlayer(player, this.healthBar), null, this);
+        this.physics.add.overlap(this.player, this.enemies);
         
         // create container for player and healthbar
-        this.add.container(200,200 [ this.healthBar, this.player ]);
+        // this.add.container(200,200 [ this.healthBar, this.player ]);
         
         // camera logic to follow player
         this.cameras.main.setBounds(0, 0, 600 * 2, 500 * 2);
         this.physics.world.setBounds(0, 0, 600 * 2, 500 * 2);
         this.cameras.main.startFollow(this.player);
+
+        // animate spell
+        this.anims.create({
+            key: "beam_anim",
+            frames: this.anims.generateFrameNumbers("beam"),
+            frameRate: 20,
+            repeat: -1
+        });
+
+        // spacebar
+        this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.projectiles = this.add.group();
     }
 
     update(){
+        // update player movement
         this.movePlayerManager();
+
+        // update enemy movement
         this.enemyFollows();
+
+        // update items
+        this.powerUp.update();
         
+        // damage calc
+        let damageIntervalId = undefined;
         const touching = !this.player.body.touching.none;
-        console.log({touching});
-        
         if (!touching) {
-            this.player.isInvulnerable = false;
+            clearInterval(damageIntervalId);
+            // this.player.isInvulnerable = false;
             this.player.clearTint();
         } else {
-            // schaden pro sekunde
+            this.player.setTintFill(0xfff345f);
+            if (!damageIntervalId) {
+                damageIntervalId = setInterval(() => {
+                    // if(this.player.isInvulnerable) return;
+                    // this.player.isInvulnerable = true;
+                
+                    // this.healtbarValue += 15;
+                    const damage = 1;
+                    this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
+                }, 9000)
+            }
         }
+
+        // beam 
+        // this.shootBeam();
+        
+        // this.projectiles.getChildren().forEach((projectile) => {
+        //     projectile.update();
+        // });
     }
 
-    hurtPlayer(player, bar) {
-        console.log(player.isInvulnerable);
-        if(player.isInvulnerable) return;
+    // hurtPlayer(player, bar) {
+    //     console.log(player.isInvulnerable);
+    //     // player.setTintFill(0xfff345f);
+    // }
 
-        player.isInvulnerable = true;
-
-        this.healtbarValue += 15;
-        const damage = 15;
-        bar.scaleX = (bar.scaleX - damage) /100;
-        player.setTintFill(0xfff345f);
-    }
+    // shootBeam() {
+    //     const beam = new Beam(this);
+    // }
 
     makeBar(x,y,color) {
         const bar = this.add.graphics();
