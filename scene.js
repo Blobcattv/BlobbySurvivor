@@ -46,6 +46,7 @@ class Scene extends Phaser.Scene {
         this.enemies = this.physics.add.sprite(config.width, config.height, "enemy");
 
         // health bar
+        this.healthBarShadow = this.makeBarShadow(0,0,0x320612);
         this.healthBar = this.makeBar(0,0,0xe7153c);
         this.healtbarValue = 100;
         this.setValue(this.healthBar, this.healtbarValue);
@@ -99,11 +100,27 @@ class Scene extends Phaser.Scene {
                     // this.player.isInvulnerable = true;
                 
                     // this.healtbarValue += 15;
-                    const damage = 1;
+                    const damage = 0.5;
+
+                    // this.scene.tweens.add({
+                    //     targets     : this.healthBar ,
+                    //     scaleX       : 10,
+                    //     ease        : 'Linear',
+                    //     duration    : 500,
+                    //   });
+                    
                     this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
-                }, 9000)
+                }, 10000)
             }
         }
+
+        // attach healthBar to player
+        this.healthBarShadow.y = this.player.body.position.y+19;  
+        this.healthBarShadow.x = this.player.body.position.x-5; 
+
+        this.healthBar.x = this.player.body.position.x-5; 
+        this.healthBar.y = this.player.body.position.y+19;  
+        
 
         // beam 
         // this.shootBeam();
@@ -123,6 +140,18 @@ class Scene extends Phaser.Scene {
     // }
 
     makeBar(x,y,color) {
+        const bar = this.add.graphics();
+
+        bar.fillStyle(color);
+        bar.fillRect(0, 0, 30, 5);
+
+        bar.x = x;
+        bar.y = y;
+        
+        return bar;
+    }
+
+    makeBarShadow(x,y,color) {
         const bar = this.add.graphics();
 
         bar.fillStyle(color);

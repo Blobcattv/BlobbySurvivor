@@ -14,17 +14,17 @@ class Powerup extends Phaser.GameObjects.GameObject {
     }
 
     update(){
-        console.log("update");
-        console.log({canActivate: this.canActivate});
+        // console.log("update");
+        // console.log({canActivate: this.canActivate});
         if (this.canActivate) {
             this.canActivate = false;
-            console.log("beam now");
+            // console.log("beam now");
             new Beam(this.parentScene);
         }
     }
 
     preDestroy() {
-        console.log("preDestroy");
+        // console.log("preDestroy");
         clearInterval(this.intervalId);
     }
 
