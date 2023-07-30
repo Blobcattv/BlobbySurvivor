@@ -38,6 +38,7 @@ class Scene extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.player.setCollideWorldBounds(true);
         this.player.isInvulnerable = false;
+        this.player.direction = "right";
         
         // add items
         this.powerUp = new Powerup(this);
@@ -78,10 +79,10 @@ class Scene extends Phaser.Scene {
     update(){
         // update player movement
         this.movePlayerManager();
-
+        
         // update enemy movement
         this.enemyFollows();
-
+        
         // update items
         this.powerUp.update();
         
@@ -98,40 +99,47 @@ class Scene extends Phaser.Scene {
                 damageIntervalId = setInterval(() => {
                     // if(this.player.isInvulnerable) return;
                     // this.player.isInvulnerable = true;
-                
+                    
                     // this.healtbarValue += 15;
                     const damage = 0.5;
-
-                    // this.scene.tweens.add({
-                    //     targets     : this.healthBar ,
-                    //     scaleX       : 10,
-                    //     ease        : 'Linear',
-                    //     duration    : 500,
-                    //   });
                     
-                    this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
-                }, 10000)
+                    // this.scene.tweens.add({
+                        //     targets     : this.healthBar ,
+                        //     scaleX       : 10,
+                        //     ease        : 'Linear',
+                        //     duration    : 500,
+                        // });
+                        
+                        this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
+                    }, 10000)
+                }
             }
-        }
+            
+            // attach healthBar to player
+            this.healthBarShadow.y = this.player.body.position.y+19;  
+            this.healthBarShadow.x = this.player.body.position.x-5; 
+            
+            this.healthBar.x = this.player.body.position.x-5; 
+            this.healthBar.y = this.player.body.position.y+19;  
+            
+            
+            // beam 
+            // this.shootBeam();
+            
+            // this.projectiles.getChildren().forEach((projectile) => {
+                //     projectile.update();
+                // });
 
-        // attach healthBar to player
-        this.healthBarShadow.y = this.player.body.position.y+19;  
-        this.healthBarShadow.x = this.player.body.position.x-5; 
+            // const currentVelo = this.player.body.velocity;
+            // if(currentVelo.x !== 0 || currentVelo.y !== 0) {
+            //     this.player.lastVelocity = this.player.body.velocity;
+            // }
 
-        this.healthBar.x = this.player.body.position.x-5; 
-        this.healthBar.y = this.player.body.position.y+19;  
-        
-
-        // beam 
-        // this.shootBeam();
-        
-        // this.projectiles.getChildren().forEach((projectile) => {
-        //     projectile.update();
-        // });
+            console.log(this.player.direction);
     }
-
-    // hurtPlayer(player, bar) {
-    //     console.log(player.isInvulnerable);
+            
+            // hurtPlayer(player, bar) {
+                //     console.log(player.isInvulnerable);
     //     // player.setTintFill(0xfff345f);
     // }
 
@@ -171,16 +179,25 @@ class Scene extends Phaser.Scene {
         const Move = 200;
         this.player.setDrag(2000);
 
+        let currentDir = "";
+        
         if (this.cursorKeys.left.isDown) {
             this.player.setVelocityX(-Move);
+            currentDir += "left";
         } else if(this.cursorKeys.right.isDown) {
             this.player.setVelocityX(Move);
+            currentDir += "right";
         }
 
          if (this.cursorKeys.up.isDown) {
             this.player.setVelocityY(-Move);
+            currentDir += "up";
         } else if(this.cursorKeys.down.isDown) {
             this.player.setVelocityY(Move);
+            currentDir += "down";
+        }
+        if(currentDir !== "") {
+            this.player.direction = currentDir;
         }
     }
 
