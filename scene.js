@@ -45,6 +45,7 @@ class Scene extends Phaser.Scene {
 
         // add "enemy"
         this.enemies = this.physics.add.sprite(config.width, config.height, "enemy");
+        this.enemies.health = 4;
 
         // health bar
         this.healthBarShadow = this.makeBarShadow(0,0,0x320612);
@@ -54,9 +55,6 @@ class Scene extends Phaser.Scene {
         
         // add physics to player and enemy
         this.physics.add.overlap(this.player, this.enemies);
-        
-        // create container for player and healthbar
-        // this.add.container(200,200 [ this.healthBar, this.player ]);
         
         // camera logic to follow player
         this.cameras.main.setBounds(0, 0, 600 * 2, 500 * 2);
@@ -97,55 +95,21 @@ class Scene extends Phaser.Scene {
             this.player.setTintFill(0xfff345f);
             if (!damageIntervalId) {
                 damageIntervalId = setInterval(() => {
-                    // if(this.player.isInvulnerable) return;
-                    // this.player.isInvulnerable = true;
-                    
-                    // this.healtbarValue += 15;
+
                     const damage = 0.5;
-                    
-                    // this.scene.tweens.add({
-                        //     targets     : this.healthBar ,
-                        //     scaleX       : 10,
-                        //     ease        : 'Linear',
-                        //     duration    : 500,
-                        // });
-                        
-                        this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
-                    }, 10000)
-                }
+                    this.healthBar.scaleX = (this.healthBar.scaleX - damage) /100;
+
+                }, 10000)
             }
+        }
             
-            // attach healthBar to player
-            this.healthBarShadow.y = this.player.body.position.y+19;  
-            this.healthBarShadow.x = this.player.body.position.x-5; 
-            
-            this.healthBar.x = this.player.body.position.x-5; 
-            this.healthBar.y = this.player.body.position.y+19;  
-            
-            
-            // beam 
-            // this.shootBeam();
-            
-            // this.projectiles.getChildren().forEach((projectile) => {
-                //     projectile.update();
-                // });
-
-            // const currentVelo = this.player.body.velocity;
-            // if(currentVelo.x !== 0 || currentVelo.y !== 0) {
-            //     this.player.lastVelocity = this.player.body.velocity;
-            // }
-
-            console.log(this.player.direction);
+        // attach healthBar to player
+        this.healthBarShadow.y = this.player.body.position.y+19;  
+        this.healthBarShadow.x = this.player.body.position.x-5; 
+        
+        this.healthBar.x = this.player.body.position.x-5; 
+        this.healthBar.y = this.player.body.position.y+19;  
     }
-            
-            // hurtPlayer(player, bar) {
-                //     console.log(player.isInvulnerable);
-    //     // player.setTintFill(0xfff345f);
-    // }
-
-    // shootBeam() {
-    //     const beam = new Beam(this);
-    // }
 
     makeBar(x,y,color) {
         const bar = this.add.graphics();
@@ -177,7 +141,7 @@ class Scene extends Phaser.Scene {
 
     movePlayerManager() {
         const Move = 200;
-        this.player.setDrag(2000);
+        this.player.setDrag(5000);
 
         let currentDir = "";
         

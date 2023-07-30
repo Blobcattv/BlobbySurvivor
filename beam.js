@@ -1,5 +1,5 @@
 class Beam extends Phaser.GameObjects.Sprite{
-    speed = 350;
+    speed = 250;
 
     constructor(scene) {
         const x = scene.player.x;
@@ -42,51 +42,27 @@ class Beam extends Phaser.GameObjects.Sprite{
                 break;
 
             case "leftup":
-                this.body.velocity.x = -speed/ 1.4;
-                this.body.velocity.y = -speed/ 1.4;
+                this.body.velocity.x = -speed;
+                this.body.velocity.y = -speed;
                 break;
 
             case "rightup":
-                this.body.velocity.x = speed/ 1.4;
-                this.body.velocity.y = -speed/ 1.4;
+                this.body.velocity.x = speed;
+                this.body.velocity.y = -speed;
                 break;
 
             case "leftdown":
-                this.body.velocity.x = -speed/ 1.4;
-                this.body.velocity.y = speed/ 1.4;
+                this.body.velocity.x = -speed;
+                this.body.velocity.y = speed;
                 break;
 
             case "rightdown":
-                this.body.velocity.x = speed/ 1.4;
-                this.body.velocity.y = speed/ 1.4;
+                this.body.velocity.x = speed;
+                this.body.velocity.y = speed;
                 break;
         
             default:
                 break;
         }
-
-        // const playerVeloX = scene.player.body.velocity.x;
-        // const playerVeloY = scene.player.body.velocity.y;
-        // const isRunningDiagonal = playerVeloX !== 0 && playerVeloY !== 0;
-
-        // let veloX = undefined;
-        // if (playerVeloX === 0) {
-        //     veloX = 0;
-        // } else if (playerVeloX > 0) {
-        //     veloX = speed;
-        // } else {
-        //     veloX = -speed;
-        // }
-        // this.body.velocity.x = isRunningDiagonal ? veloX / 1.4 : veloX;
-
-        // let veloY = undefined;
-        // if (playerVeloY === 0) {
-        //     veloY = 0;
-        // } else if (playerVeloY > 0) {
-        //     veloY = speed;
-        // } else {
-        //     veloY = -speed;
-        // }
-        // this.body.velocity.y = isRunningDiagonal ? veloY / 1.4 : veloY;
     }
 }
